@@ -1,12 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import RoomCard from '../components/RoomCard'
-import rooms from '../data/rooms'
 
 function Rooms() {
+  const [rooms, setRooms] = useState([])
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/rooms')
+      .then(res => res.json())
+      .then(data => setRooms(data))
+      .catch(() => setError('Erro ao carregar salas.'))
+      .finally(() => setLoading(false))
+  }, [])
 
   const filtered = rooms.filter(room =>
-    room.nome.toLowerCase().includes(search.toLowerCase())
+    room.name?.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -40,14 +50,20 @@ function Rooms() {
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map(room => (
-          <RoomCard key={room.id} {...room} />
-        ))}
-      </div>
+      {/* Estados */}
+      {loading && <p className="text-center text-gray-400 mt-12">A carregar salas...</p>}
+      {error && <p className="text-center text-red-400 mt-12">{error}</p>}
 
-      {filtered.length === 0 && (
+      {/* Grid */}
+      {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map(room => (
+            <RoomCard key={room.id} {...room} />
+          ))}
+        </div>
+      )}
+
+      {!loading && !error && filtered.length === 0 && (
         <p className="text-center text-gray-400 mt-12">No rooms found.</p>
       )}
 
