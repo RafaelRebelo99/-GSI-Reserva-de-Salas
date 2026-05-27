@@ -1,4 +1,4 @@
-function RoomCard({ name, type, floor, wing, capacity }) {
+function RoomCard({ name, type, floor, wing, capacity, onReserve }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5 flex flex-col gap-3">
 
@@ -29,7 +29,10 @@ function RoomCard({ name, type, floor, wing, capacity }) {
           <span className="w-2 h-2 rounded-full bg-green-500" />
           <span className="text-gray-700">Available</span>
         </div>
-        <button className="bg-red-900 text-white text-sm font-medium px-4 py-2 rounded hover:bg-red-800 transition-colors">
+        <button
+          onClick={onReserve}
+          className="bg-red-900 text-white text-sm font-medium px-4 py-2 rounded hover:bg-red-800 transition-colors"
+        >
           Reserve
         </button>
       </div>

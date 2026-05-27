@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import RoomCard from '../components/RoomCard'
+import ReservationModal from '../components/ReservationModal'
 
 function Rooms() {
   const [rooms, setRooms] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [salaAtiva, setSalaAtiva] = useState(null)
 
   useEffect(() => {
     fetch('http://localhost:3001/api/rooms')
@@ -18,6 +20,33 @@ function Rooms() {
   const filtered = rooms.filter(room =>
     room.name?.toLowerCase().includes(search.toLowerCase())
   )
+
+  async function handleConfirm(dados) {
+    const res = await fetch('http://localhost:3001/api/reservations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        room_id: salaAtiva.id,
+        professor_name: dados.professorName,
+        date: dados.date,
+        start_time: dados.startTime,
+        end_time: dados.endTime,
+      }),
+    })
+
+    if (res.status === 409) {
+      alert('A sala já está reservada nesse horário.')
+      return
+    }
+
+    if (!res.ok) {
+      alert('Erro ao criar reserva.')
+      return
+    }
+
+    setSalaAtiva(null)
+    alert('Reserva confirmada com sucesso!')
+  }
 
   return (
     <div className="px-8 py-8">
@@ -58,13 +87,25 @@ function Rooms() {
       {!loading && !error && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map(room => (
-            <RoomCard key={room.id} {...room} />
+            <RoomCard
+              key={room.id}
+              {...room}
+              onReserve={() => setSalaAtiva(room)}
+            />
           ))}
         </div>
       )}
 
       {!loading && !error && filtered.length === 0 && (
         <p className="text-center text-gray-400 mt-12">No rooms found.</p>
+      )}
+
+      {salaAtiva && (
+        <ReservationModal
+          sala={salaAtiva}
+          onClose={() => setSalaAtiva(null)}
+          onConfirm={handleConfirm}
+        />
       )}
 
     </div>
