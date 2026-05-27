@@ -8,6 +8,8 @@ function Rooms() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [salaAtiva, setSalaAtiva] = useState(null)
+  const [reservationError, setReservationError] = useState(null)
+  const [reservationSuccess, setReservationSuccess] = useState(false)
 
   useEffect(() => {
     fetch('http://localhost:3001/api/rooms')
@@ -22,12 +24,15 @@ function Rooms() {
   )
 
   async function handleConfirm(dados) {
+    setReservationError(null)
+    setReservationSuccess(false)
+
     const res = await fetch('http://localhost:3001/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         room_id: salaAtiva.id,
-        professor_name: dados.professorName,
+        professor: dados.professorName,
         date: dados.date,
         start_time: dados.startTime,
         end_time: dados.endTime,
@@ -35,17 +40,20 @@ function Rooms() {
     })
 
     if (res.status === 409) {
-      alert('A sala já está reservada nesse horário.')
+      setReservationError('A sala já está reservada nesse horário.')
       return
     }
 
     if (!res.ok) {
-      alert('Erro ao criar reserva.')
+      setReservationError('Erro ao criar reserva.')
       return
     }
 
-    setSalaAtiva(null)
-    alert('Reserva confirmada com sucesso!')
+    setReservationSuccess(true)
+    setTimeout(() => {
+      setSalaAtiva(null)
+      setReservationSuccess(false)
+    }, 2000)
   }
 
   return (
@@ -103,8 +111,10 @@ function Rooms() {
       {salaAtiva && (
         <ReservationModal
           sala={salaAtiva}
-          onClose={() => setSalaAtiva(null)}
+          onClose={() => { setSalaAtiva(null); setReservationError(null) }}
           onConfirm={handleConfirm}
+          error={reservationError}
+          success={reservationSuccess}
         />
       )}
 

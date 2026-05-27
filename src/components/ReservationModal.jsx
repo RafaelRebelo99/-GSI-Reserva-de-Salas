@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function ReservationModal({ sala, onClose, onConfirm }) {
+function ReservationModal({ sala, onClose, onConfirm, error, success }) {
   const [form, setForm] = useState({
     professorName: '',
     date: '',
@@ -10,8 +10,6 @@ function ReservationModal({ sala, onClose, onConfirm }) {
 
   const [errors, setErrors] = useState({})
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
   function today() {
     return new Date().toISOString().split('T')[0]
   }
@@ -20,8 +18,6 @@ function ReservationModal({ sala, onClose, onConfirm }) {
     setForm(prev => ({ ...prev, [field]: value }))
     setErrors(prev => ({ ...prev, [field]: undefined }))
   }
-
-  // ── Validation ─────────────────────────────────────────────────────────────
 
   function validate() {
     const next = {}
@@ -48,10 +44,7 @@ function ReservationModal({ sala, onClose, onConfirm }) {
   function handleConfirm() {
     if (!validate()) return
     onConfirm?.({ roomName: sala.name, ...form })
-    onClose()
   }
-
-  // ── Input class helper ─────────────────────────────────────────────────────
 
   function inputClass(hasError) {
     return [
@@ -62,8 +55,6 @@ function ReservationModal({ sala, onClose, onConfirm }) {
         : 'border-gray-300 bg-white hover:border-gray-400',
     ].join(' ')
   }
-
-  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div
@@ -173,6 +164,25 @@ function ReservationModal({ sala, onClose, onConfirm }) {
           </div>
 
         </div>
+
+        {/* Feedback */}
+        {error && (
+          <div className="mx-5 mb-2 flex items-center gap-2 border border-red-200 bg-red-50 rounded px-3 py-2">
+            <svg className="w-4 h-4 shrink-0 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
+        {success && (
+          <div className="mx-5 mb-2 flex items-center gap-2 border border-green-200 bg-green-50 rounded px-3 py-2">
+            <svg className="w-4 h-4 shrink-0 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <p className="text-sm text-green-600">Reserva confirmada com sucesso!</p>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="px-5 py-4 border-t border-gray-200 grid grid-cols-2 gap-3">
