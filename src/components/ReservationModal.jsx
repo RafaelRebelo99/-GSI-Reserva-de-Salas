@@ -47,7 +47,7 @@ function ReservationModal({ sala, onClose, onConfirm }) {
 
   function handleConfirm() {
     if (!validate()) return
-    onConfirm?.({ roomName: sala.nome, ...form })
+    onConfirm?.({ roomName: sala.name, ...form })
     onClose()
   }
 
@@ -66,12 +66,10 @@ function ReservationModal({ sala, onClose, onConfirm }) {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      {/* Card — mesma linguagem visual do RoomCard */}
       <div className="bg-white border border-gray-200 rounded-lg w-full max-w-md mx-4 flex flex-col gap-0 shadow-xl">
 
         {/* Header */}
@@ -82,7 +80,6 @@ function ReservationModal({ sala, onClose, onConfirm }) {
             className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded hover:bg-gray-100"
             aria-label="Close"
           >
-            {/* X icon */}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -92,26 +89,26 @@ function ReservationModal({ sala, onClose, onConfirm }) {
         {/* Body */}
         <div className="px-5 py-4 flex flex-col gap-4">
 
-          {/* Room — read-only, mesmo estilo do badge de tipo */}
+          {/* Room — read-only */}
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-500 font-medium">Room</label>
             <div className="flex items-start justify-between gap-2 border border-gray-200 rounded px-3 py-2 bg-gray-50">
               <div>
-                <p className="text-sm font-bold text-red-900">{sala.nome}</p>
-                <p className="text-xs text-gray-500">{sala.piso} • {sala.ala}</p>
+                <p className="text-sm font-bold text-red-900">{sala.name}</p>
+                <p className="text-xs text-gray-500">{sala.floor} • {sala.wing}</p>
               </div>
               <span className="text-xs font-semibold border border-gray-300 rounded px-2 py-0.5 text-gray-600 whitespace-nowrap mt-0.5">
-                {sala.tipo}
+                {sala.type}
               </span>
             </div>
           </div>
 
-          {/* Capacity info */}
+          {/* Capacity */}
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
               <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
             </svg>
-            Capacity: {sala.capacidade} Students
+            Capacity: {sala.capacity} Students
           </div>
 
           <hr className="border-gray-200" />
