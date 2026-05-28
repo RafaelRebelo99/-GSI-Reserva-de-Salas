@@ -1,5 +1,12 @@
 const { supabase } = require("../supabase/supabaseClient.js");
 
+async function getAllReservations() {
+  return await supabase
+    .from("reservations")
+    .select("*, rooms(name)")
+    .order("date", { ascending: true });
+}
+
 async function getReservationsByRoomAndDate(roomId, date) {
   return await supabase
     .from("reservations")
@@ -16,4 +23,4 @@ async function createReservation(data) {
     .single();
 }
 
-module.exports = { getReservationsByRoomAndDate, createReservation };
+module.exports = { getAllReservations, getReservationsByRoomAndDate, createReservation };
