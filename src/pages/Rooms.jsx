@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react'
 import RoomCard from '../components/RoomCard'
+import ReservationModal from '../components/ReservationModal'
 
 function Rooms() {
   const [rooms, setRooms] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [salaAtiva, setSalaAtiva] = useState(null)
+  const [reservationError, setReservationError] = useState(null)
+  const [reservationSuccess, setReservationSuccess] = useState(false)
 
   useEffect(() => {
     fetch('http://localhost:3001/api/rooms')
@@ -18,6 +22,39 @@ function Rooms() {
   const filtered = rooms.filter(room =>
     room.name?.toLowerCase().includes(search.toLowerCase())
   )
+
+  async function handleConfirm(dados) {
+    setReservationError(null)
+    setReservationSuccess(false)
+
+    const res = await fetch('http://localhost:3001/api/reservations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        room_id: salaAtiva.id,
+        professor: dados.professorName,
+        date: dados.date,
+        start_time: dados.startTime,
+        end_time: dados.endTime,
+      }),
+    })
+
+    if (res.status === 409) {
+      setReservationError('A sala já está reservada nesse horário.')
+      return
+    }
+
+    if (!res.ok) {
+      setReservationError('Erro ao criar reserva.')
+      return
+    }
+
+    setReservationSuccess(true)
+    setTimeout(() => {
+      setSalaAtiva(null)
+      setReservationSuccess(false)
+    }, 2000)
+  }
 
   return (
     <div className="px-8 py-8">
@@ -58,13 +95,27 @@ function Rooms() {
       {!loading && !error && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map(room => (
-            <RoomCard key={room.id} {...room} />
+            <RoomCard
+              key={room.id}
+              {...room}
+              onReserve={() => setSalaAtiva(room)}
+            />
           ))}
         </div>
       )}
 
       {!loading && !error && filtered.length === 0 && (
         <p className="text-center text-gray-400 mt-12">No rooms found.</p>
+      )}
+
+      {salaAtiva && (
+        <ReservationModal
+          sala={salaAtiva}
+          onClose={() => { setSalaAtiva(null); setReservationError(null) }}
+          onConfirm={handleConfirm}
+          error={reservationError}
+          success={reservationSuccess}
+        />
       )}
 
     </div>
