@@ -1,4 +1,10 @@
-const { getReservationsByRoomAndDate, createReservation } = require("../services/reservations.service.js");
+const { getAllReservations, getReservationsByRoomAndDate, createReservation } = require("../services/reservations.service.js");
+
+async function getReservations(_req, res) {
+  const { data, error } = await getAllReservations();
+  if (error) return res.status(500).json({ error: "Erro ao buscar reservas." });
+  res.json(data);
+}
 
 async function postReservation(req, res) {
   const { room_id, professor, date, start_time, end_time } = req.body;
@@ -24,4 +30,4 @@ async function postReservation(req, res) {
   res.status(201).json(data);
 }
 
-module.exports = { postReservation };
+module.exports = { getReservations, postReservation };

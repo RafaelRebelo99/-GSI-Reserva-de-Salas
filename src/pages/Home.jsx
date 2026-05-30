@@ -1,7 +1,9 @@
+import ReservationsTable from '../components/ReservationsTable'
+
 function Home() {
   return (
-    <div>
-      <h1>Home</h1>
+    <div className="px-8 py-8">
+      <ReservationsTable />
     </div>
   )
 }
