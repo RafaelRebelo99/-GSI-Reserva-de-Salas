@@ -23,4 +23,12 @@ async function createReservation(data) {
     .single();
 }
 
-module.exports = { getAllReservations, getReservationsByRoomAndDate, createReservation };
+async function deleteReservation(id) {
+  return await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", id)
+    .select();
+}
+
+module.exports = { getAllReservations, getReservationsByRoomAndDate, createReservation, deleteReservation };
