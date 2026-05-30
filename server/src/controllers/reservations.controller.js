@@ -1,4 +1,4 @@
-const { getAllReservations, getReservationsByRoomAndDate, createReservation } = require("../services/reservations.service.js");
+const { getAllReservations, getReservationsByRoomAndDate, createReservation, deleteReservation } = require("../services/reservations.service.js");
 
 async function getReservations(_req, res) {
   const { data, error } = await getAllReservations();
@@ -30,4 +30,20 @@ async function postReservation(req, res) {
   res.status(201).json(data);
 }
 
-module.exports = { getReservations, postReservation };
+async function deletedReservation(req, res) {
+  const { id } = req.params;
+  
+  const { data, error } = await deleteReservation(id);
+
+  if (error) {
+    return res.status(500).json({ error: "Erro ao eliminar reserva." });
+  }
+
+  if (!data || data.length === 0) {
+    return res.status(404).json({ error: "Reserva não encontrada." });
+  }
+
+  return res.status(204).send();
+}
+
+module.exports = { getReservations, postReservation, deletedReservation };
