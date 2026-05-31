@@ -4,6 +4,7 @@ function ReservationsTable() {
   const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   useEffect(() => {
     fetch('http://localhost:3001/api/reservations')
@@ -17,6 +18,23 @@ function ReservationsTable() {
     new Date(dateStr).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 
   const formatTime = (start, end) => `${start.slice(0, 5)} - ${end.slice(0, 5)}`
+
+  const deleteReservation = async (id) => {
+    try {
+      setDeletingId(id);
+
+      const res = await fetch(
+        `http://localhost:3001/api/reservations/${id}`,
+        { method: "DELETE" }
+      );
+
+      if (!res.ok) throw new Error("Erro ao eliminar reserva");
+
+      setReservations((prev) => prev.filter((r) => r.id !== id));
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div>
@@ -54,8 +72,16 @@ function ReservationsTable() {
             <span className="text-sm text-gray-800">{formatDate(r.date)}</span>
             <span className="text-sm text-gray-800">{formatTime(r.start_time, r.end_time)}</span>
             <div className="flex justify-end">
-              <button className="border border-red-900 text-red-900 text-sm px-4 py-1.5 rounded hover:bg-red-50 transition-colors">
-                Cancel
+              <button
+                onClick={() => deleteReservation(r.id)}
+                disabled={deletingId === r.id}
+                className={`border text-sm px-4 py-1.5 rounded transition-colors ${
+                  deletingId === r.id
+                    ? "opacity-50 cursor-not-allowed"
+                    : "border-red-900 text-red-900 hover:bg-red-50"
+                }`}
+              >
+                {deletingId === r.id ? "Removing..." : "Cancel"}
               </button>
             </div>
           </div>
