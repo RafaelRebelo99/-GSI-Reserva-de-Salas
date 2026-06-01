@@ -1,6 +1,6 @@
-import { Building2, CheckCircle, CalendarDays, BarChart2 } from 'lucide-react'
+import { Building2, CheckCircle, CalendarDays, BarChart2, Clock } from 'lucide-react'
 
-function StatsCards({ totalRooms, freeRooms, reservedRooms }) {
+function StatsCards({ totalRooms, freeRooms, reservedRooms, todayReservations }) {
   const occupancy = totalRooms ? Math.round((reservedRooms / totalRooms) * 100) : 0
 
   const cards = [
@@ -13,19 +13,25 @@ function StatsCards({ totalRooms, freeRooms, reservedRooms }) {
     {
       label: 'Free Rooms',
       value: freeRooms,
-      sub: '● Available Now',
+      sub: '● Available Today',
       icon: <CheckCircle className="w-5 h-5 text-red-900" />,
     },
     {
       label: 'Reserved Rooms',
       value: reservedRooms,
-      sub: 'Active Sessions',
+      sub: "Today's Active Sessions",
       icon: <CalendarDays className="w-5 h-5 text-red-900" />,
+    },
+    {
+      label: "Today's Reservations",
+      value: todayReservations,
+      sub: 'Total bookings today',
+      icon: <Clock className="w-5 h-5 text-red-900" />,
     },
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
       {cards.map((card) => (
         <div key={card.label} className="border border-gray-200 rounded-lg p-5 bg-white flex flex-col gap-2">
           <div className="flex items-center justify-between">

@@ -7,6 +7,7 @@ function Dashboard() {
     totalRooms: 0,
     freeRooms: 0,
     reservedRooms: 0,
+    todayReservations: 0,
   })
 
   useEffect(() => {
@@ -14,12 +15,20 @@ function Dashboard() {
       fetch('http://localhost:3001/api/rooms').then(r => r.json()),
       fetch('http://localhost:3001/api/reservations').then(r => r.json()),
     ]).then(([rooms, reservations]) => {
+     
       const today = new Date().toISOString().split('T')[0]
-      const activeToday = reservations.filter(r => r.date === today).length
+
+      const todayReservations = reservations.filter(r => r.date?.slice(0, 10) === today)
+
+      const roomsReservedToday = new Set(
+        todayReservations.map(r => r.room_id)
+      ).size
+
       setStats({
         totalRooms: rooms.length,
-        freeRooms: rooms.length - activeToday,
-        reservedRooms: activeToday,
+        freeRooms: Math.max(0, rooms.length - roomsReservedToday),
+        reservedRooms: roomsReservedToday,
+        todayReservations: todayReservations.length,
       })
     })
   }, [])
@@ -38,6 +47,7 @@ function Dashboard() {
         totalRooms={stats.totalRooms}
         freeRooms={stats.freeRooms}
         reservedRooms={stats.reservedRooms}
+        todayReservations={stats.todayReservations}
       />
 
       {/* Reservations Table */}
