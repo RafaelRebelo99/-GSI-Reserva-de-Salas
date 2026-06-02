@@ -1,11 +1,7 @@
-import ReservationsTable from '../components/ReservationsTable'
+import Dashboard from '../components/Dashboard'
 
 function Home() {
-  return (
-    <div className="px-8 py-8">
-      <ReservationsTable />
-    </div>
-  )
+  return <Dashboard />
 }
 
 export default Home
