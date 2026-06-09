@@ -7,7 +7,7 @@ function ReservationsTable() {
   const [deletingId, setDeletingId] = useState(null)
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_API_URL}/api/reservations')
+    fetch(`${import.meta.env.VITE_API_URL}/api/reservations`)
       .then(res => res.json())
       .then(data => setReservations(data))
       .catch(() => setError('Erro ao carregar reservas.'))
