@@ -12,8 +12,8 @@ function Dashboard() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:3001/api/rooms').then(r => r.json()),
-      fetch('http://localhost:3001/api/reservations').then(r => r.json()),
+      fetch('${import.meta.env.VITE_API_URL}/api/rooms').then(r => r.json()),
+      fetch('${import.meta.env.VITE_API_URL}/api/reservations').then(r => r.json()),
     ]).then(([rooms, reservations]) => {
      
       const today = new Date().toISOString().split('T')[0]

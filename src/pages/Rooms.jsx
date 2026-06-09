@@ -12,7 +12,7 @@ function Rooms() {
   const [reservationSuccess, setReservationSuccess] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/rooms')
+    fetch('${import.meta.env.VITE_API_URL}/api/rooms')
       .then(res => res.json())
       .then(data => setRooms(data))
       .catch(() => setError('Erro ao carregar salas.'))
@@ -27,7 +27,7 @@ function Rooms() {
     setReservationError(null)
     setReservationSuccess(false)
 
-    const res = await fetch('http://localhost:3001/api/reservations', {
+    const res = await fetch('${import.meta.env.VITE_API_URL}/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
